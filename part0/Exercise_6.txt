@@ -1,0 +1,8 @@
+actor User
+User->browser:Create new note and  press submit button 
+note over browser:
+e.preventDefault() prevents the standard request from being sent
+push the new note intro notes list
+end note 
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser:HTTP 201 {"message":"note created"}
