@@ -2,29 +2,34 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
 const Average = ({ total, good, bad }) => {
-  const average = (good - bad) / total;
   if (total === 0) {
-    return <p> add comments </p>;
+    return <div> add comments </div>;
   }
-  return <p> average {average} </p>;
+  const average = (good - bad) / total;
+  return <div> average {average} </div>;
 };
 
 const Positive = ({ good, total }) => {
-  const positiveCom = (good * 100) / total;
   if (total === 0) {
-    return <p> add positive comments </p>;
+    return <div> add positive comments </div>;
   }
-  return <p> Positive {positiveCom} % </p> ;
+  const positiveCom = (good * 100) / total;
+  return <div> Positive {positiveCom} % </div>;
 };
 
 const Button = (props) => <button onClick={props.handleClick}>{props.text}</button>;
 
-const Statistics = ({ text, value }) => (
-  <p>
-    {" "}
-    {text} {value}{" "}
-  </p>
-);
+const Statistics = ({ good, bad, neutral, total }) => {
+  return (
+    <div>
+      <div> good {good} </div>
+      <div> neutral {neutral} </div>
+      <div> bad {bad} </div>
+      <Positive good={good} total={total} />
+      <Average total={total} good={good} bad={bad} />
+    </div>
+  );
+};
 
 const App = () => {
   const [good, setGood] = useState(0);
@@ -43,12 +48,7 @@ const App = () => {
       <Button handleClick={increaseNeutral} text="neutral" />
       <Button handleClick={increaseBad} text="bad" />
       <h1> Statistics </h1>
-      <Statistics text="good" value={good} />
-      <Statistics text="neutral" value={neutral} />
-      <Statistics text="bad" value={bad} />
-      <Statistics text="all" value={total} />
-      <Average total={total} good={good} bad={bad} />
-      <Positive good={good} total={total}/>
+      <Statistics good={good} neutral={neutral} bad={bad} total={total} />
     </div>
   );
 };
