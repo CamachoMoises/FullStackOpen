@@ -20,6 +20,9 @@ const Positive = ({ good, total }) => {
 const Button = (props) => <button onClick={props.handleClick}>{props.text}</button>;
 
 const Statistics = ({ good, bad, neutral, total }) => {
+  if(total===0){
+    return <p> No feedback given </p>
+  }
   return (
     <div>
       <div> good {good} </div>
