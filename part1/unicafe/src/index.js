@@ -19,17 +19,19 @@ const Positive = ({ good, total }) => {
 
 const Button = (props) => <button onClick={props.handleClick}>{props.text}</button>;
 
+const Statistic= ({text, value})=> <div> {text} {value} </div>
+
 const Statistics = ({ good, bad, neutral, total }) => {
   if(total===0){
     return <p> No feedback given </p>
   }
   return (
     <div>
-      <div> good {good} </div>
-      <div> neutral {neutral} </div>
-      <div> bad {bad} </div>
-      <Positive good={good} total={total} />
+      <Statistic text="good" value={good} />
+      <Statistic text="neutral" value={neutral}/>
+      <Statistic text="all" value={total}/>
       <Average total={total} good={good} bad={bad} />
+      <Positive good={good} total={total}/>
     </div>
   );
 };
