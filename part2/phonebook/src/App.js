@@ -9,15 +9,16 @@ const App = () => {
 
   const AddName = (event) => {
     event.preventDefault();
-    const same = persons.indexOf(newName)
-    console.log("Same",same);
-    // setPersons(persons.concat({name:newName}));
-    setNewName("");
-    window.alert("Hello world!");
+    const names = persons.map((person) => person.name);
+    const repeated = names.indexOf(newName);
+    if (repeated === -1) {
+      setPersons(persons.concat({ name: newName }));
+      setNewName("");
+    }
+    else window.alert(`${newName} is already addded to phonebook `);
   };
   return (
     <div>
-      <div>debug: {newName}</div>
       <h2>Phonebook</h2>
       <form onSubmit={AddName}>
         <div>
