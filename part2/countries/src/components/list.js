@@ -1,6 +1,6 @@
 import React from "react"
 
-const List=({countries})=>{
+const List=({countries, setFilterCountries})=>{
     if(countries.length===0 || countries.length>10){
         console.log(countries);
         return <div> Too many matches, specify another filter    </div>
@@ -28,7 +28,7 @@ const List=({countries})=>{
     return(
         <div>
             {countries.map((country) =>(
-                <div key={country.alpha3Code}>{country.name}</div>
+                <div key={country.alpha3Code}>{country.name}  <button onClick={()=>setFilterCountries(country.name)}>show</button> </div>
             ))}
         </div>
     )
