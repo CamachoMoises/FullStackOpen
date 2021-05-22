@@ -3,7 +3,6 @@ import Filter from "./components/filter";
 import PersonForm from "./components/personForm";
 import Persons from "./components/persons";
 import personService from "./service/person";
-import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -28,7 +27,7 @@ const App = () => {
   const AddPerson = (event) => {
     event.preventDefault();
     const names = persons.map((person) => person.name);
-    const repeated = names.indexOf(newName);
+    let repeated = names.indexOf(newName);
     if (repeated === -1) {
       const personObjet = {
         name: newName,
@@ -39,14 +38,30 @@ const App = () => {
         setNewName("");
         setNewNumber("");
       });
-    } else window.alert(`${newName} is already addded to Phonebook `);
-    setNewName("");
-    setNewNumber("");
+    } else {
+      repeated++
+      if (window.confirm(`${newName} is already addded to Phonebook, replace the old number with a new one?`)) {
+        const personObjet = {
+          name: newName,
+          number: newNumber,
+        };
+        personService.update(repeated, personObjet).then((returnedPerson) => {
+          setPersons(persons.map((person) => (person.id !== repeated ? person : returnedPerson)));
+        }).catch(error=>{
+          alert(`the person was already delete from server`)
+          setPersons(persons.filter(per=>per.id===repeated))
+        });
+        setNewNumber("");
+      }
+      setNewName("");
+    }
   };
-  const deletePerson = (id) => {
-    personService.deletePerson(id).then(toDelete=>{
-      setPersons(persons.filter(person=>person.id!==id))
-    })
+  const deletePerson = (id, name) => {
+    if (window.confirm(`delete ${name} ?`)) {
+      personService.deletePerson(id).then((toDelete) => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
   };
 
   return (
@@ -56,7 +71,7 @@ const App = () => {
       <h1> add a new </h1>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} AddPerson={AddPerson} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} deletePerson={(id) => deletePerson(id)} />
+      <Persons personsToShow={personsToShow} deletePerson={(id, name) => deletePerson(id, name)} />
     </div>
   );
 };
