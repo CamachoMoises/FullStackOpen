@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/filter";
 import PersonForm from "./components/personForm";
 import Persons from "./components/persons";
-import axios from "axios"
+import personService from "./service/person";
+import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -15,11 +16,11 @@ const App = () => {
   const handleFilterChange = (event) => {
     setFilterName(event.target.value);
   };
-  useEffect(()=>{
-    axios.get("http://localhost:3001/persons").then(response=>{
-      setPersons(response.data);
+  useEffect(() => {
+    personService.getAll().then((initialsPersons) => {
+      setPersons(initialsPersons);
     });
-  });
+  }, []);
   const AddPerson = (event) => {
     event.preventDefault();
     const names = persons.map((person) => person.name);
@@ -29,7 +30,11 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      setPersons(persons.concat(personObjet));
+      personService.create(personObjet).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+      });
     } else window.alert(`${newName} is already addded to Phonebook `);
     setNewName("");
     setNewNumber("");
@@ -37,19 +42,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter 
-      fillterName={fillterName} 
-      handleFilterChange={handleFilterChange}/>
+      <Filter fillterName={fillterName} handleFilterChange={handleFilterChange} />
       <h1> add a new </h1>
-      <PersonForm 
-        newName={newName} 
-        newNumber={newNumber} 
-        handleNameChange={handleNameChange} 
-        handleNumberChange={handleNumberChange} 
-        AddPerson={AddPerson}/>
+      <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} AddPerson={AddPerson} />
       <h2>Numbers</h2>
       <Persons personsToShow={personsToShow} />
-  
     </div>
   );
 };
