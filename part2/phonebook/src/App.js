@@ -12,15 +12,19 @@ const App = () => {
   const [fillterName, setFilterName] = useState("");
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
+
   const personsToShow = fillterName === "" ? persons : persons.filter((person) => person.name.toLowerCase().includes(fillterName.toLowerCase()));
+
   const handleFilterChange = (event) => {
     setFilterName(event.target.value);
   };
+
   useEffect(() => {
     personService.getAll().then((initialsPersons) => {
       setPersons(initialsPersons);
     });
   }, []);
+
   const AddPerson = (event) => {
     event.preventDefault();
     const names = persons.map((person) => person.name);
@@ -39,6 +43,12 @@ const App = () => {
     setNewName("");
     setNewNumber("");
   };
+  const deletePerson = (id) => {
+    personService.deletePerson(id).then(toDelete=>{
+      setPersons(persons.filter(person=>person.id!==id))
+    })
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -46,7 +56,7 @@ const App = () => {
       <h1> add a new </h1>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} AddPerson={AddPerson} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} deletePerson={(id) => deletePerson(id)} />
     </div>
   );
 };
