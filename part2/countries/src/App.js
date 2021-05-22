@@ -12,18 +12,19 @@ function App() {
   };
   useEffect(() => {
     axios
-      .get("https://restcountries.eu/rest/v2/all")
-      .then((response) => {
-        setCountires(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    .get("https://restcountries.eu/rest/v2/all")
+    .then((response) => {
+      setCountires(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }, []);
+
   return (
     <div>
       <Filter filterCountries={filterCountries} handleFilterChange={handleFilterChange} />
-      <List countries={countriesToShow} setFilterCountries={setFilterCountries} />
+      <List countries={countriesToShow} setFilterCountries={setFilterCountries}/>
     </div>
   );
 }
