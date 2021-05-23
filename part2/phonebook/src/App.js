@@ -3,14 +3,15 @@ import Filter from "./components/filter";
 import PersonForm from "./components/personForm";
 import Persons from "./components/persons";
 import personService from "./service/person";
-import Notification from "./components/notification"
+import Notification from "./components/notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [fillterName, setFilterName] = useState("");
-  const [notification, setNotification]=useState("");
+  const [notification, setNotification] = useState("");
+  const [notificationType, setNotificationType] = useState("successful");
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
@@ -30,8 +31,8 @@ const App = () => {
   const AddPerson = (event) => {
     event.preventDefault();
     const names = persons.map((person) => person.name);
-    let repeated = names.indexOf(newName);
-    if (repeated === -1) {
+    let duplicate = names.indexOf(newName);
+    if (duplicate === -1) {
       const personObjet = {
         name: newName,
         number: newNumber,
@@ -41,25 +42,30 @@ const App = () => {
         setNewName("");
         setNewNumber("");
         setNotification(`added ${newName}`);
-        setTimeout(()=>setNotification(""),2000)
-        
+        setNotificationType("successful");
+        setTimeout(() => setNotification(""), 2000);
       });
     } else {
-      repeated++
+      duplicate++;
       if (window.confirm(`${newName} is already addded to Phonebook, replace the old number with a new one?`)) {
         const personObjet = {
           name: newName,
           number: newNumber,
         };
-        personService.update(repeated, personObjet).then((returnedPerson) => {
-          setPersons(persons.map((person) => (person.id !== repeated ? person : returnedPerson)));
-        }).catch(error=>{
-          alert(`the person was already delete from server`)
-          setPersons(persons.filter(per=>per.id===repeated))
-        });
+        personService
+          .update(duplicate, personObjet)
+          .then((returnedPerson) => {
+            setPersons(persons.map((person) => (person.id !== duplicate ? person : returnedPerson)));
+          })
+          .catch((error) => {
+            const person = persons.find((per) => per.id === duplicate);
+            setNotification(`Information of ${person.name} has already been removed from server`);
+            setNotificationType("error");
+            setPersons(persons.filter((per) => per.id !== duplicate));
+          });
         setNewNumber("");
         setNotification(`Update ${newName}`);
-        setTimeout(()=>setNotification(""),2000)
+        setTimeout(() => setNotification(""), 2000);
       }
       setNewName("");
     }
@@ -75,7 +81,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification}/>
+      <Notification message={notification} type={notificationType} />
       <Filter fillterName={fillterName} handleFilterChange={handleFilterChange} />
       <h1> add a new </h1>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} AddPerson={AddPerson} />
